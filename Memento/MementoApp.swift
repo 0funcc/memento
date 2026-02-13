@@ -11,7 +11,7 @@ import SwiftUI
 struct MementoApp: App {
     var body: some Scene {
         WindowGroup {
-            TodayView()
+            AllView()
         }
     }
 }

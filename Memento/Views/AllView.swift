@@ -4,7 +4,12 @@ import SwiftUI
 
 struct AllView: View {
     var body: some View {
-        Text("Hello World")
+        NavigationStack {
+            VStack {
+                
+            }
+            .navigationTitle(Text("All Tasks"))
+        }
     }
 }
 
