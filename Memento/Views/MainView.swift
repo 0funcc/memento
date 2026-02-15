@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct MainView: View {
+    let day = Date.todayDayNumber
+    
     var body: some View {
         TabView {
             TodayView()
                 .tabItem {
-                    Label("Today", systemImage: "calendar")
+                    Label("Today", systemImage: "\(day)")
                 }
             
             AllView()
