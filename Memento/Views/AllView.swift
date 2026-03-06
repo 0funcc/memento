@@ -11,34 +11,42 @@ struct AllView: View {
     @State var isAddTaskPresented: Bool = false
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                if tasks.isEmpty {
-                    Text("No tasks")
-                } else {
-                    List {
-                        ForEach(tasks) { task in
+        VStack {
+            if tasks.isEmpty {
+                Text("No tasks")
+            } else {
+                List {
+                    ForEach(tasks) { task in
+                        ZStack {
+                            NavigationLink(destination: TaskDetailView(task: task)) {
+                                Color.clear
+                            }
                             TaskCardView(task: task)
                         }
-                        .onDelete(perform: deleteItems)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                    .listStyle(.plain)
+                    .onDelete(perform: deleteItems)
+                }
+                .listStyle(.plain)
+            }
+        }
+        .background(
+            Image("bg")
+                .scaledToFill()
+                .ignoresSafeArea()
+        )
+        .navigationTitle("All Tasks")
+        .toolbar {
+            ToolbarItem {
+                Button(action: { isAddTaskPresented = true }) {
+                    Image(systemName: "plus")
                 }
             }
-            .navigationTitle("All Tasks")
-            .toolbar {
-                ToolbarItem {
-                    Button(action: { isAddTaskPresented = true }) {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-            .sheet(isPresented: $isAddTaskPresented) {
-                AddTaskView()
-            }
-            
+        }
+        .sheet(isPresented: $isAddTaskPresented) {
+            AddTaskView()
         }
     }
     

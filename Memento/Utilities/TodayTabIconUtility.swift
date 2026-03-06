@@ -8,9 +8,11 @@
 import Foundation
 
 extension Date {
-    static var todayIconDate: Int {
+    static var today: Int {
         Calendar.current.component(.day, from: Date())
     }
     
-    static var todayIcon = "\(todayIconDate).calendar"
+    static func todayDate() -> String {
+        "\(today).calendar"
+    }
 }

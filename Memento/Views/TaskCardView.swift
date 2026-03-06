@@ -24,14 +24,17 @@ struct TaskCardView: View {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle.dotted")
                     .contentTransition(.symbolEffect(.replace))
             }
+            .buttonStyle(.plain)
             
             VStack(alignment: .leading, spacing: 4) {
                 if hasDescription && hasDueDate {                    Text(task.taskName)
                         .font(.headline)
+                        .lineLimit(1)
                     
                     HStack {
                         Text(task.taskDescription ?? "")
                             .font(.subheadline)
+                            .lineLimit(1)
                         Spacer()
                         Text(task.taskDueDate!.formatted(date: .abbreviated, time: .omitted))
                             .font(.caption)
@@ -40,12 +43,15 @@ struct TaskCardView: View {
                 else if hasDescription {
                     Text(task.taskName)
                         .font(.headline)
+                        .lineLimit(1)
                     Text(task.taskDescription ?? "")
                         .font(.subheadline)
+                        .lineLimit(1)
                 }
                 else if hasDueDate {                    HStack {
                         Text(task.taskName)
                             .font(.headline)
+                            .lineLimit(1)
                         Spacer()
                         Text(task.taskDueDate!.formatted(date: .abbreviated, time: .omitted))
                             .font(.caption)
@@ -54,18 +60,19 @@ struct TaskCardView: View {
                 else {
                     Text(task.taskName)
                         .font(.headline)
+                        .lineLimit(1)
                 }
             }
 
             Spacer(minLength: 0)
         }
         .padding()
-        .glassEffect()
+        .glassEffect(.clear)
         .listRowSeparator(.hidden)
     }
 }
 
 #Preview(traits: .fixedLayout(width: 400, height: 60)) {
-    @Previewable @State var card: Task = .init(taskName: "Test Task", taskDescription: nil, taskDueDate: nil, isCompleted: false)
+    @Previewable @State var card: Task = .init(taskName: "Test Task", taskDescription: "Test Description", taskDueDate: nil, isCompleted: false)
     TaskCardView(task: card)
 }

@@ -1,5 +1,3 @@
-// displays tasks that are due today
-
 import SwiftUI
 import SwiftData
 
@@ -8,49 +6,59 @@ struct TodayView: View {
     
     @Query(filter: Task.todayPredicate()) var tasks: [Task]
     
-    @State var isAddTaskPresented: Bool = false
+    @State private var isAddTaskPresented: Bool = false
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                if tasks.isEmpty {
-                    Text("No tasks")
-                } else {
-                    List {
-                        ForEach(tasks) { task in
+        VStack {
+            if tasks.isEmpty {
+                Text("No tasks")
+                    .padding()
+            } else {
+                List {
+                    ForEach(tasks) { task in
+                        ZStack {
+                            NavigationLink(destination: TaskDetailView(task: task)) {
+                                Color.clear
+                            }
                             TaskCardView(task: task)
                         }
-                        .onDelete(perform: deleteItems)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                    .listStyle(.plain)
+                    .onDelete(perform: deleteItems)
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+            }
+        }
+        .background(
+            Image("bg")
+                .scaledToFill()
+                .ignoresSafeArea()
+        )
+        .navigationTitle("Today")
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    isAddTaskPresented = true
+                } label: {
+                    Image(systemName: "plus")
                 }
             }
-            .navigationTitle("Today")
-            .toolbar {
-                ToolbarItem {
-                    Button(action: { isAddTaskPresented = true }) {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-            .sheet(isPresented: $isAddTaskPresented) {
-                AddTaskView()
-            }
-            
+        }
+        .sheet(isPresented: $isAddTaskPresented) {
+            AddTaskView()
         }
     }
     
     private func deleteItems(at offsets: IndexSet) {
-        let itemsToDelete = offsets.map { tasks[$0] }
-        for task in itemsToDelete {
-            modelContext.delete(task)
+        for index in offsets {
+            modelContext.delete(tasks[index])
         }
+        
         do {
             try modelContext.save()
         } catch {
-            // Handle save error appropriately in a real app, perhaps with an alert
             print("Failed to save context after deletion: \(error)")
         }
     }
@@ -59,4 +67,3 @@ struct TodayView: View {
 #Preview {
     TodayView()
 }
-
