@@ -18,6 +18,11 @@ struct TaskCardView: View {
         task.taskDueDate != nil
     }
     
+    private var isOverdue: Bool {
+        guard let dueDate = task.taskDueDate else { return false }
+        return dueDate < Calendar.current.startOfDay(for: Date()) && !task.isCompleted
+    }
+    
     var body: some View {
         HStack {
             Button(action: {
@@ -40,6 +45,7 @@ struct TaskCardView: View {
                         Spacer()
                         Text(task.taskDueDate!.formatted(date: .abbreviated, time: .omitted))
                             .font(.caption)
+                            .foregroundStyle(isOverdue ? .red : .secondary)
                     }
                 }
                 

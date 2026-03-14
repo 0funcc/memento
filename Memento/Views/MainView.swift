@@ -23,6 +23,13 @@ struct MainView: View {
             .tabItem {
                 Label("All", systemImage: "list.bullet")
             }
+            
+            NavigationStack {
+                SettingsView()
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gear")
+            }
         }
     }
 }

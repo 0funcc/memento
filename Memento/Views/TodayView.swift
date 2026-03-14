@@ -8,6 +8,8 @@ struct TodayView: View {
     
     @State private var isAddTaskPresented: Bool = false
     
+    @AppStorage("userName") private var userName: String = ""
+    
     var incompleteTasks: [Task] { tasks.filter { !$0.isCompleted } }
     var completedTasks: [Task] { tasks.filter { $0.isCompleted } }
     
@@ -65,7 +67,7 @@ struct TodayView: View {
                 }
             }
         }
-        .navigationTitle("Today")
+        .navigationTitle("\(greetingText())")
         .toolbar {
             ToolbarItem {
                 Button {
@@ -89,6 +91,25 @@ struct TodayView: View {
         } catch {
             print("Failed to save context after deletion: \(error)")
         }
+    }
+    
+    private func greetingText() -> String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        let displayName = userName.isEmpty ? "User" : userName
+        
+        let greeting: String
+        switch hour {
+        case 5..<12:
+            greeting = "Good morning"
+        case 12..<17:
+            greeting = "Good afternoon"
+        case 17..<21:
+            greeting = "Good evening"
+        default:
+            greeting = "Good night"
+        }
+        
+        return "\(greeting), \(displayName)"
     }
 }
 
