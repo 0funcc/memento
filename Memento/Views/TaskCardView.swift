@@ -20,46 +20,32 @@ struct TaskCardView: View {
     
     var body: some View {
         HStack {
-            Button(action: { task.isCompleted.toggle() }) {
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    task.isCompleted.toggle()
+                }
+            }) {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle.dotted")
                     .contentTransition(.symbolEffect(.replace))
             }
             .buttonStyle(.plain)
             
             VStack(alignment: .leading, spacing: 4) {
-                if hasDescription && hasDueDate {                    Text(task.taskName)
+                HStack {
+                    Text(task.taskName)
                         .font(.headline)
                         .lineLimit(1)
                     
-                    HStack {
-                        Text(task.taskDescription ?? "")
-                            .font(.subheadline)
-                            .lineLimit(1)
+                    if hasDueDate {
                         Spacer()
                         Text(task.taskDueDate!.formatted(date: .abbreviated, time: .omitted))
                             .font(.caption)
                     }
                 }
-                else if hasDescription {
-                    Text(task.taskName)
-                        .font(.headline)
-                        .lineLimit(1)
+                
+                if hasDescription {
                     Text(task.taskDescription ?? "")
                         .font(.subheadline)
-                        .lineLimit(1)
-                }
-                else if hasDueDate {                    HStack {
-                        Text(task.taskName)
-                            .font(.headline)
-                            .lineLimit(1)
-                        Spacer()
-                        Text(task.taskDueDate!.formatted(date: .abbreviated, time: .omitted))
-                            .font(.caption)
-                    }
-                }
-                else {
-                    Text(task.taskName)
-                        .font(.headline)
                         .lineLimit(1)
                 }
             }

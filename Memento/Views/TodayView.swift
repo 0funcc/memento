@@ -8,6 +8,9 @@ struct TodayView: View {
     
     @State private var isAddTaskPresented: Bool = false
     
+    var incompleteTasks: [Task] { tasks.filter { !$0.isCompleted } }
+    var completedTasks: [Task] { tasks.filter { $0.isCompleted } }
+    
     var body: some View {
         VStack {
             if tasks.isEmpty {
@@ -16,29 +19,50 @@ struct TodayView: View {
             } else {
                 List {
                     Section {
-                        ForEach(tasks.filter { !$0.isCompleted }) { task in
-                            ZStack {
-                                NavigationLink(destination: TaskDetailView(task: task)) {
-                                    Color.clear
+                        ForEach(incompleteTasks) { task in
+                            TaskCardView(task: task)
+                                .background {
+                                    NavigationLink(value: task) { EmptyView() }
+                                        .opacity(0)
                                 }
-                                TaskCardView(task: task)
-                            }
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
                         }
-                        .onDelete(perform: deleteItems)
+                        .onDelete { offsets in
+                            deleteItems(at: offsets, from: incompleteTasks)
+                        }
                     } header: {
                         Text("Todo")
                             .font(.caption)
                     }
                     
-                    let completedTasks = tasks.filter { !$0.isCompleted }
                     if !completedTasks.isEmpty {
-                        // completed tasks will be presented here
+                        Section {
+                            ForEach(completedTasks) { task in
+                                TaskCardView(task: task)
+                                    .background {
+                                        NavigationLink(value: task) { EmptyView() }
+                                            .opacity(0)
+                                    }
+                                    .listRowSeparator(.hidden)
+                                    .listRowBackground(Color.clear)
+                            }
+                            .onDelete { offsets in
+                                deleteItems(at: offsets, from: completedTasks)
+                            }
+                        } header: {
+                            Text("Completed")
+                                .font(.caption)
+                        }
                     }
                 }
                 .listStyle(.plain)
+                .animation(.easeInOut(duration: 0.3), value: incompleteTasks.map(\.isCompleted))
+                .animation(.easeInOut(duration: 0.3), value: completedTasks.count)
                 .scrollContentBackground(.hidden)
+                .navigationDestination(for: Task.self) { task in
+                    TaskDetailView(task: task)
+                }
             }
         }
         .navigationTitle("Today")
@@ -56,11 +80,10 @@ struct TodayView: View {
         }
     }
     
-    private func deleteItems(at offsets: IndexSet) {
+    private func deleteItems(at offsets: IndexSet, from source: [Task]) {
         for index in offsets {
-            modelContext.delete(tasks[index])
+            modelContext.delete(source[index])
         }
-        
         do {
             try modelContext.save()
         } catch {

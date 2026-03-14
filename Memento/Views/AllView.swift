@@ -1,5 +1,3 @@
-// displays all tasks
-
 import SwiftUI
 import SwiftData
 
@@ -8,34 +6,71 @@ struct AllView: View {
     
     @Query private var tasks: [Task]
     
-    @State var isAddTaskPresented: Bool = false
+    @State private var isAddTaskPresented: Bool = false
+    
+    var incompleteTasks: [Task] { tasks.filter { !$0.isCompleted } }
+    var completedTasks: [Task] { tasks.filter { $0.isCompleted } }
     
     var body: some View {
         VStack {
             if tasks.isEmpty {
                 Text("No tasks")
+                    .padding()
             } else {
                 List {
-                    ForEach(tasks) { task in
-                        ZStack {
-                            NavigationLink(destination: TaskDetailView(task: task)) {
-                                Color.clear
-                            }
+                    Section {
+                        ForEach(incompleteTasks) { task in
                             TaskCardView(task: task)
+                                .background {
+                                    NavigationLink(value: task) { EmptyView() }
+                                        .opacity(0)
+                                }
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
                         }
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                        .onDelete { offsets in
+                            deleteItems(at: offsets, from: incompleteTasks)
+                        }
+                    } header: {
+                        Text("Todo")
+                            .font(.caption)
                     }
-                    .onDelete(perform: deleteItems)
+                    
+                    if !completedTasks.isEmpty {
+                        Section {
+                            ForEach(completedTasks) { task in
+                                TaskCardView(task: task)
+                                    .background {
+                                        NavigationLink(value: task) { EmptyView() }
+                                            .opacity(0)
+                                    }
+                                    .listRowSeparator(.hidden)
+                                    .listRowBackground(Color.clear)
+                            }
+                            .onDelete { offsets in
+                                deleteItems(at: offsets, from: completedTasks)
+                            }
+                        } header: {
+                            Text("Completed")
+                                .font(.caption)
+                        }
+                    }
                 }
                 .listStyle(.plain)
+                .animation(.easeInOut(duration: 0.3), value: incompleteTasks.map(\.isCompleted))
+                .animation(.easeInOut(duration: 0.3), value: completedTasks.count)
+                .scrollContentBackground(.hidden)
+                .navigationDestination(for: Task.self) { task in
+                    TaskDetailView(task: task)
+                }
             }
         }
         .navigationTitle("All Tasks")
         .toolbar {
             ToolbarItem {
-                Button(action: { isAddTaskPresented = true }) {
+                Button {
+                    isAddTaskPresented = true
+                } label: {
                     Image(systemName: "plus")
                 }
             }
@@ -45,10 +80,9 @@ struct AllView: View {
         }
     }
     
-    private func deleteItems(at offsets: IndexSet) {
-        let itemsToDelete = offsets.map { tasks[$0] }
-        for task in itemsToDelete {
-            modelContext.delete(task)
+    private func deleteItems(at offsets: IndexSet, from source: [Task]) {
+        for index in offsets {
+            modelContext.delete(source[index])
         }
         do {
             try modelContext.save()

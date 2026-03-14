@@ -6,8 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TaskDetailView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    
     @Bindable var task: Task
     
     var body: some View {
@@ -41,8 +45,19 @@ struct TaskDetailView: View {
             Section {
                 Toggle("Completed", isOn: $task.isCompleted)
             }
-            .navigationTitle(task.taskName.isEmpty ? "New Task" : task.taskName)
-                    .navigationBarTitleDisplayMode(.inline)
+        }
+        .navigationTitle(task.taskName.isEmpty ? "New Task" : task.taskName)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .destructiveAction) {
+                Button(role: .destructive) {
+                    modelContext.delete(task)
+                    try? modelContext.save()
+                    dismiss()
+                } label: {
+                    Image(systemName: "trash")
+                }
+            }
         }
     }
 }
