@@ -32,11 +32,6 @@ struct AllView: View {
                 .listStyle(.plain)
             }
         }
-        .background(
-            Image("bg")
-                .scaledToFill()
-                .ignoresSafeArea()
-        )
         .navigationTitle("All Tasks")
         .toolbar {
             ToolbarItem {
@@ -58,7 +53,6 @@ struct AllView: View {
         do {
             try modelContext.save()
         } catch {
-            // Handle save error appropriately in a real app, perhaps with an alert
             print("Failed to save context after deletion: \(error)")
         }
     }

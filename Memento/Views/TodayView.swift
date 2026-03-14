@@ -15,27 +15,32 @@ struct TodayView: View {
                     .padding()
             } else {
                 List {
-                    ForEach(tasks) { task in
-                        ZStack {
-                            NavigationLink(destination: TaskDetailView(task: task)) {
-                                Color.clear
+                    Section {
+                        ForEach(tasks.filter { !$0.isCompleted }) { task in
+                            ZStack {
+                                NavigationLink(destination: TaskDetailView(task: task)) {
+                                    Color.clear
+                                }
+                                TaskCardView(task: task)
                             }
-                            TaskCardView(task: task)
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
                         }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                        .onDelete(perform: deleteItems)
+                    } header: {
+                        Text("Todo")
+                            .font(.caption)
                     }
-                    .onDelete(perform: deleteItems)
+                    
+                    let completedTasks = tasks.filter { !$0.isCompleted }
+                    if !completedTasks.isEmpty {
+                        // completed tasks will be presented here
+                    }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
             }
         }
-        .background(
-            Image("bg")
-                .scaledToFill()
-                .ignoresSafeArea()
-        )
         .navigationTitle("Today")
         .toolbar {
             ToolbarItem {
