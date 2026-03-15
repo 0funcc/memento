@@ -9,6 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct AddTaskView: View {
+    @EnvironmentObject var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
+
     @State private var taskName = ""
     @State private var taskDescription = ""
     @State private var taskDueDate: Date?
@@ -43,6 +46,8 @@ struct AddTaskView: View {
                 }
             }
             .navigationTitle("Add Task")
+            .scrollContentBackground(.hidden)
+            .background(themeManager.currentBackground(for: colorScheme))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(action: { dismiss() }) {
@@ -76,4 +81,5 @@ struct AddTaskView: View {
 
 #Preview {
     AddTaskView()
+        .environmentObject(ThemeManager())
 }

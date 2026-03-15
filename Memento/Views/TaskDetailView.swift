@@ -9,6 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct TaskDetailView: View {
+    @EnvironmentObject var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
+
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
@@ -48,6 +51,8 @@ struct TaskDetailView: View {
         }
         .navigationTitle(task.taskName.isEmpty ? "New Task" : task.taskName)
         .navigationBarTitleDisplayMode(.inline)
+        .scrollContentBackground(.hidden)
+        .background(themeManager.currentBackground(for: colorScheme))
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
                 Button(role: .destructive) {
@@ -65,4 +70,5 @@ struct TaskDetailView: View {
 #Preview {
     @Previewable @State var card: Task = .init(taskName: "Test Task", taskDescription: "Test Description", taskDueDate: nil, isCompleted: false)
     TaskDetailView(task: card)
+        .environmentObject(ThemeManager())
 }
