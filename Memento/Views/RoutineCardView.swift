@@ -37,11 +37,6 @@ struct RoutineCardView: View {
             }
             
             Spacer(minLength: 0)
-            
-            // Chevron
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
         }
         .padding(16)
         .glassEffect(
