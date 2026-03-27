@@ -1,10 +1,3 @@
-//
-//  RoutineCardView.swift
-//  Memento
-//
-//  Created by Ali Sajulake Abdul Gafur on 23/03/2026.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -12,14 +5,17 @@ struct RoutineCardView: View {
     let routine: Routine
     
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            
+        HStack(alignment: .center, spacing: 14) {
             // Icon
             Text(routine.routineIcon)
                 .font(.title2)
-                .frame(width: 44, height: 44)
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .frame(width: 52, height: 52)
+                .background(routine.color.opacity(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(routine.color.opacity(0.4), lineWidth: 1)
+                )
             
             // Text content
             VStack(alignment: .leading, spacing: 4) {
@@ -39,16 +35,43 @@ struct RoutineCardView: View {
                     .foregroundStyle(.tertiary)
                     .padding(.top, 2)
             }
+            
+            Spacer(minLength: 0)
+            
+            // Chevron
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
         }
-        .padding()
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading)
+        .padding(16)
+        .glassEffect(
+            routine.routineColor != nil
+                ? .regular.tint(routine.color)
+                : .regular,
+            in: RoundedRectangle(cornerRadius: 24)
+        )
     }
 }
 
 #Preview {
-    let routine = Routine(routineIcon: "🌅", routineName: "Morning Routine", routineDescription: "Start the day with focus and energy")
-    
-    RoutineCardView(routine: routine)
+    VStack(spacing: 12) {
+        // With color
+        RoutineCardView(routine: {
+            let r = Routine(routineIcon: "🌅", routineName: "Morning Routine", routineDescription: "Start the day with focus and energy", routineColor: "FF6B6B")
+            return r
+        }())
+        
+        // With different color
+        RoutineCardView(routine: {
+            let r = Routine(routineIcon: "💪", routineName: "Workout", routineDescription: "Strength and cardio session", routineColor: "4ECDC4")
+            return r
+        }())
+        
+        // Default (no color)
+        RoutineCardView(routine: {
+            let r = Routine(routineIcon: "📚", routineName: "Evening Reading", routineDescription: nil)
+            return r
+        }())
+    }
+    .padding()
 }

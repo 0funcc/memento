@@ -33,13 +33,24 @@ struct RoutineView: View {
                     AddRoutineView()
                 }
             } else {
-                VStack {
+                List {
                     ForEach(routines) { routine in
                         NavigationLink(destination: RoutineDetailView()) {
                             RoutineCardView(routine: routine)
                         }
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    }
+                    .onDelete { offsets in
+                        for index in offsets {
+                            modelContext.delete(routines[index])
+                        }
                     }
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .padding(.top)
             }
         }
         .navigationTitle("Routines")
@@ -50,9 +61,9 @@ private func makePreviewContainer() -> ModelContainer {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Routine.self, configurations: config)
     
-    let routine1 = Routine(routineIcon: "☀️", routineName: "Morning Routine", routineDescription: "Start the day right")
-    let routine2 = Routine(routineIcon: "🌙", routineName: "Evening Routine", routineDescription: "Wind down")
-    let routine3 = Routine(routineIcon: "💪", routineName: "Workout", routineDescription: nil)
+    let routine1 = Routine(routineIcon: "☀️", routineName: "Morning Routine", routineDescription: "Start the day right", routineColor: "FF6B6B")
+    let routine2 = Routine(routineIcon: "🌙", routineName: "Evening Routine", routineDescription: "Wind down", routineColor: "6B8CFF")
+    let routine3 = Routine(routineIcon: "💪", routineName: "Workout", routineDescription: nil, routineColor: "4ECDC4")
     
     container.mainContext.insert(routine1)
     container.mainContext.insert(routine2)
