@@ -56,23 +56,26 @@ struct AddTaskView: View {
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let finalDescription = taskDescription
-                            .trimmingCharacters(in: .whitespacesAndNewlines)
-                        let taskDescValue: String? = finalDescription.isEmpty ? nil : finalDescription
-                        let dueDateValue: Date? = hasReminder ? (taskDueDate ?? Date()) : nil
-                        
-                        let newTask = Task(
-                            taskName: taskName,
-                            taskDescription: taskDescValue,
-                            taskDueDate: dueDateValue,
-                            isCompleted: false
-                        )
-                        
-                        modelContext.insert(newTask)
-                        dismiss()
-                    }
-                    .disabled(taskName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    Button {
+                            let finalDescription = taskDescription
+                                .trimmingCharacters(in: .whitespacesAndNewlines)
+                            let taskDescValue: String? = finalDescription.isEmpty ? nil : finalDescription
+                            let dueDateValue: Date? = hasReminder ? (taskDueDate ?? Date()) : nil
+                            
+                            let newTask = Task(
+                                taskName: taskName,
+                                taskDescription: taskDescValue,
+                                taskDueDate: dueDateValue,
+                                isCompleted: false
+                            )
+                            
+                            modelContext.insert(newTask)
+                            dismiss()
+                        } label: {
+                            Image(systemName: "checkmark")
+                        }
+                        .buttonStyle(.glassProminent)
+                        .disabled(taskName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
         }

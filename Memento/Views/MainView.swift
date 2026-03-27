@@ -5,13 +5,17 @@ struct MainView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var navigationState = NavigationState()
     @State private var selectedTab: Int = 0
-
+    
     var body: some View {
         ZStack {
-            themeManager.currentBackground(for: colorScheme)
-                .ignoresSafeArea()
-            
             TabView(selection: $selectedTab) {
+                NavigationStack {
+                    RoutineView()
+                }
+                .tabItem {
+                    Label("Routine", systemImage: "sparkles")
+                }
+                
                 NavigationStack(path: $navigationState.todayPath) {
                     TodayView()
                         .environment(navigationState)
@@ -59,7 +63,7 @@ struct MainView: View {
         }
         .preferredColorScheme(
             themeManager.appTheme == AppTheme.light.rawValue ? .light :
-            themeManager.appTheme == AppTheme.dark.rawValue ? .dark : nil
+                themeManager.appTheme == AppTheme.dark.rawValue ? .dark : nil
         )
     }
 }

@@ -15,6 +15,8 @@ class Task {
     var taskDueDate: Date?
     var isCompleted: Bool = false
     
+    var routines: [Routine] = []
+    
     init(taskName: String, taskDescription: String?, taskDueDate: Date?, isCompleted: Bool) {
         self.taskName = taskName
         self.taskDescription = taskDescription?.isEmpty == true ? nil : taskDescription
@@ -28,7 +30,7 @@ extension Task {
         let calendar = Calendar.current
         let startOfToday = calendar.startOfDay(for: Date())
         let startOfTomorrow = calendar.date(byAdding: .day, value: 1, to: startOfToday)!
-
+        
         return #Predicate<Task> { task in
             // Only tasks with a non-nil due date that is within today
             if let dueDate = task.taskDueDate {
